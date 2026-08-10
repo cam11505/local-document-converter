@@ -1,0 +1,29 @@
+output_directory: output
+overwrite: false
+verbose: false
+max_file_size_mb: 100
+max_pages: 500
+
+docling:
+  enabled: true
+  artifacts_path: null
+  allow_model_download: false
+
+excel:
+  data_only: true
+  read_only: true
+  max_rows_per_sheet: 100000
+  max_columns_per_sheet: 1000
+
+ocr:
+  enabled: false
+  languages:
+    - ch
+    - en
+  min_text_characters: 40
+  model_cache_directory: .model-cache
+
+logging:
+  level: INFO
+  include_source_path: true
+  include_document_content: false
