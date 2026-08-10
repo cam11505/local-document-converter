@@ -11,7 +11,7 @@
 
 | 檔案 | Stage | 內容與驗收 |
 |---|---:|---|
-| `sample.md` | 4 | heading、paragraph、list、pipe table、image reference |
+| `sample.md` | 4 | 2026-08-11 由專案自行撰寫；虛構中文內容，涵蓋 heading、paragraph、ordered/unordered list、escaped pipe table、image reference，可自由隨本專案重分發 |
 | `sample.xlsx` | 5 | 多 sheet、中文、日期、公式、merged cells |
 | `sample.pdf` | 6 | 自製一頁或兩頁 PDF，含標題、段落、小表格 |
 | `sample.docx` | 6/7 | 自製 heading、paragraph、list、table |

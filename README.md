@@ -46,17 +46,28 @@ python -m pytest
 local-doc-convert --help
 ```
 
-轉換範例（完成對應 Stage 後）：
+目前可執行的 Markdown 轉換範例：
 
 ```powershell
-local-doc-convert convert tests\fixtures\sample.pdf --to markdown --output work\sample.md
+local-doc-convert convert tests\fixtures\sample.md --to markdown --output work\sample.md
+local-doc-convert convert tests\fixtures\sample.md --to json --output work\sample.json
+local-doc-convert inspect tests\fixtures\sample.md
 ```
+
+### Markdown MVP 支援範圍
+
+- ATX heading（`#`～`######`）、paragraph
+- ordered／unordered list
+- pipe table，包含 escaped pipe（`\|`）與 backslash
+- 單獨一行的 image reference
+
+目前不解析 fenced code、block quote、nested list、thematic break、Setext heading 或完整 CommonMark inline AST。偵測到這些語法時會保留為 paragraph text，並在 `DocumentIR.warnings` 回報 `markdown.unsupported_syntax`。
 
 ## 目前骨架狀態
 
 - 已定義可序列化的 `DocumentIR`、block model、Parser/Exporter protocol。
 - 已提供 parser/exporter registry、ConversionService 與 CLI 契約。
-- Markdown parser、Markdown/JSON exporter 可作為第一批實作起點。
+- Markdown parser、Markdown/JSON exporter、ConversionService 與 CLI 垂直切片已可使用。
 - Docling、Excel、DOCX、OCR adapter 保留清楚的 `NotImplementedError` 邊界，交由 Stage prompts 逐步完成。
 - 骨架不宣稱已具備完整轉換能力；每一階段完成後都必須跑測試。
 

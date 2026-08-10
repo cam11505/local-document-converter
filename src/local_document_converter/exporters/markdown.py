@@ -12,6 +12,7 @@ from local_document_converter.domain.models import (
     ParagraphBlock,
     TableBlock,
 )
+from local_document_converter.exceptions import ExportError
 from local_document_converter.exporters.base import ExportContext, ExporterCapability
 
 
@@ -21,7 +22,7 @@ class MarkdownExporter:
     def export(self, document: DocumentIR, destination: Path, context: ExportContext) -> None:
         del context
         sections: list[str] = []
-        for block in sorted(document.blocks, key=lambda item: item.order):
+        for block in document.blocks:
             if isinstance(block, HeadingBlock):
                 sections.append(f"{'#' * block.level} {block.text}")
             elif isinstance(block, ParagraphBlock):
@@ -45,7 +46,10 @@ class MarkdownExporter:
         content = "\n\n".join(sections)
         if content:
             content += "\n"
-        destination.write_text(content, encoding="utf-8", newline="\n")
+        try:
+            destination.write_text(content, encoding="utf-8", newline="\n")
+        except OSError as exc:
+            raise ExportError(f"could not write Markdown output: {destination}") from exc
 
     @classmethod
     def _render_table(cls, block: TableBlock) -> str:
@@ -69,4 +73,6 @@ class MarkdownExporter:
 
     @staticmethod
     def _escape(value: str | None) -> str:
-        return "" if value is None else value.replace("|", "\\|").replace("\n", "<br>")
+        if value is None:
+            return ""
+        return value.replace("\\", "\\\\").replace("|", "\\|").replace("\n", "<br>")
