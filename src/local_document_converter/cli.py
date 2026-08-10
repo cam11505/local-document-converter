@@ -88,7 +88,7 @@ def inspect_command(
     except (LocalDocumentConverterError, NotImplementedError) as exc:
         typer.echo(f"Error: {exc}", err=True)
         raise typer.Exit(code=1) from exc
-    typer.echo(document.model_dump_json(indent=2))
+    typer.echo(document.to_json(indent=2))
 
 
 if __name__ == "__main__":

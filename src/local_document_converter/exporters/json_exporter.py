@@ -13,5 +13,5 @@ class JsonExporter:
     def export(self, document: DocumentIR, destination: Path, context: ExportContext) -> None:
         del context
         destination.write_text(
-            document.model_dump_json(indent=2) + "\n", encoding="utf-8", newline="\n"
+            document.to_json(indent=2) + "\n", encoding="utf-8", newline="\n"
         )
