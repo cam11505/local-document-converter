@@ -63,12 +63,21 @@ local-doc-convert inspect tests\fixtures\sample.md
 
 目前不解析 fenced code、block quote、nested list、thematic break、Setext heading 或完整 CommonMark inline AST。偵測到這些語法時會保留為 paragraph text，並在 `DocumentIR.warnings` 回報 `markdown.unsupported_syntax`。
 
+### Excel MVP 支援範圍
+
+- 僅接受 `.xlsx`，使用 `openpyxl` 的 `read_only=True` 安全讀取，不保留或執行巨集。
+- 每張 worksheet 依原始順序輸出一個 heading 與一個 table；sheet 名稱、索引與資料起始座標保存在 block attributes。
+- `data_only=True` 為預設；公式沒有快取值時保留空白位置並回報 `excel.formula_cache_missing`。設為 `false` 可輸出公式文字。
+- 日期與時間正規化為 ISO 8601；外圍全空白列／欄會裁切，內部空白列保留。
+- merged cells 只保留左上角值，並以 `excel.merged_cells` warning 記錄範圍。
+- `excel.max_rows_per_sheet` 與 `excel.max_columns_per_sheet` 會在資料物化前限制每張工作表大小。
+
 ## 目前骨架狀態
 
 - 已定義可序列化的 `DocumentIR`、block model、Parser/Exporter protocol。
 - 已提供 parser/exporter registry、ConversionService 與 CLI 契約。
-- Markdown parser、Markdown/JSON exporter、ConversionService 與 CLI 垂直切片已可使用。
-- Docling、Excel、DOCX、OCR adapter 保留清楚的 `NotImplementedError` 邊界，交由 Stage prompts 逐步完成。
+- Markdown／Excel parser、Markdown/JSON exporter、ConversionService 與 CLI 垂直切片已可使用。
+- Docling、DOCX、OCR adapter 保留清楚的 `NotImplementedError` 邊界，交由 Stage prompts 逐步完成。
 - 骨架不宣稱已具備完整轉換能力；每一階段完成後都必須跑測試。
 
 ## 非目標

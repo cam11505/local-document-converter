@@ -12,7 +12,7 @@
 | 檔案 | Stage | 內容與驗收 |
 |---|---:|---|
 | `sample.md` | 4 | 2026-08-11 由專案自行撰寫；虛構中文內容，涵蓋 heading、paragraph、ordered/unordered list、escaped pipe table、image reference，可自由隨本專案重分發 |
-| `sample.xlsx` | 5 | 多 sheet、中文、日期、公式、merged cells |
+| `sample.xlsx` | 5 | 2026-08-11 由 `@oai/artifact-tool` 2.8.6+ 自行產生；虛構中文內容，含「摘要」與「空白與合併」兩張 sheet、日期、公式、內部空白列與 merged cells；可自由隨本專案重分發；SHA-256 `fa312bd4de6696802862b1c58f51b6c1deaca8c86563404d21cf3252bce5dcf0` |
 | `sample.pdf` | 6 | 自製一頁或兩頁 PDF，含標題、段落、小表格 |
 | `sample.docx` | 6/7 | 自製 heading、paragraph、list、table |
 | `sample.png` | 6/9 | 自製清楚中英文文字圖片 |
