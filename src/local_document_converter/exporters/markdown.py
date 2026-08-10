@@ -12,12 +12,11 @@ from local_document_converter.domain.models import (
     ParagraphBlock,
     TableBlock,
 )
-from local_document_converter.exporters.base import ExportContext
+from local_document_converter.exporters.base import ExportContext, ExporterCapability
 
 
 class MarkdownExporter:
-    format_name = "markdown"
-    output_extension = ".md"
+    capability = ExporterCapability(format_name="markdown", output_extension=".md")
 
     def export(self, document: DocumentIR, destination: Path, context: ExportContext) -> None:
         del context

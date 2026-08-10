@@ -2,13 +2,20 @@
 
 from pathlib import Path
 
+from local_document_converter.capabilities import Availability
 from local_document_converter.domain.models import DocumentIR
-from local_document_converter.parsers.base import ParseContext
+from local_document_converter.parsers.base import ParseContext, ParserCapability
 
 
 class PaddleOcrFallback:
-    name = "paddleocr-fallback"
-    supported_extensions = frozenset({".png", ".jpg", ".jpeg", ".tif", ".tiff"})
+    capability = ParserCapability(
+        name="paddleocr-fallback",
+        supported_extensions=frozenset({".png", ".jpg", ".jpeg", ".tif", ".tiff"}),
+        availability=Availability.unavailable(
+            "PaddleOCR fallback is gated by the Stage 9 license review",
+            install_hint='after approval, install with pip install -e ".[ocr]"',
+        ),
+    )
 
     def parse(self, source: Path, context: ParseContext) -> DocumentIR:
         del source, context

@@ -49,7 +49,7 @@ class ConversionService:
         self._validate_source(source)
         parser = self._parsers.for_path(source)
         exporter = self._exporters.for_format(request.output_format)
-        destination = self._destination(request, source, exporter.output_extension)
+        destination = self._destination(request, source, exporter.capability.output_extension)
 
         if source == destination:
             raise InputValidationError("input and output paths must be different")
@@ -68,8 +68,8 @@ class ConversionService:
         return ConversionResult(
             source=source,
             destination=destination,
-            parser_name=parser.name,
-            exporter_name=exporter.format_name,
+            parser_name=parser.capability.name,
+            exporter_name=exporter.capability.format_name,
             warning_count=len(document.warnings),
         )
 

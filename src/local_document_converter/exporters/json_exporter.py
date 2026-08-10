@@ -3,12 +3,11 @@
 from pathlib import Path
 
 from local_document_converter.domain.models import DocumentIR
-from local_document_converter.exporters.base import ExportContext
+from local_document_converter.exporters.base import ExportContext, ExporterCapability
 
 
 class JsonExporter:
-    format_name = "json"
-    output_extension = ".json"
+    capability = ExporterCapability(format_name="json", output_extension=".json")
 
     def export(self, document: DocumentIR, destination: Path, context: ExportContext) -> None:
         del context

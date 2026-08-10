@@ -16,7 +16,7 @@ from local_document_converter.domain.models import (
     SourceInfo,
     TableBlock,
 )
-from local_document_converter.parsers.base import ParseContext
+from local_document_converter.parsers.base import ParseContext, ParserCapability
 
 _HEADING = re.compile(r"^(#{1,6})\s+(.+)$")
 _LIST_ITEM = re.compile(r"^\s*(?:(\d+)[.)]|[-+*])\s+(.+)$")
@@ -25,8 +25,9 @@ _TABLE_SEPARATOR = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\
 
 
 class MarkdownParser:
-    name = "markdown"
-    supported_extensions = frozenset({".md", ".markdown"})
+    capability = ParserCapability(
+        name="markdown", supported_extensions=frozenset({".md", ".markdown"})
+    )
 
     def parse(self, source: Path, context: ParseContext) -> DocumentIR:
         del context

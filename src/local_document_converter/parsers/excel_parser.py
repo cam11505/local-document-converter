@@ -2,13 +2,20 @@
 
 from pathlib import Path
 
+from local_document_converter.capabilities import Availability
 from local_document_converter.domain.models import DocumentIR
-from local_document_converter.parsers.base import ParseContext
+from local_document_converter.parsers.base import ParseContext, ParserCapability
 
 
 class ExcelParser:
-    name = "openpyxl"
-    supported_extensions = frozenset({".xlsx"})
+    capability = ParserCapability(
+        name="openpyxl",
+        supported_extensions=frozenset({".xlsx"}),
+        availability=Availability.unavailable(
+            "Excel adapter is a Stage 5 placeholder",
+            install_hint="complete Stage 5 before selecting this parser",
+        ),
+    )
 
     def parse(self, source: Path, context: ParseContext) -> DocumentIR:
         del source, context
