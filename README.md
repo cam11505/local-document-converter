@@ -60,6 +60,7 @@ PDF 解析使用 optional Docling runtime。只需核心、Markdown、Excel 功�
 
 ```powershell
 local-doc-convert convert tests\fixtures\sample.pdf --to markdown --output work\sample.pdf.md
+local-doc-convert convert tests\fixtures\sample.md --to docx --output work\sample.docx
 ```
 
 真實 Docling integration tests 預設排除，避免在 unit test 階段初始化或下載模型；確認本機
@@ -88,12 +89,19 @@ python -m pytest -m integration tests\test_docling_parser.py
 - merged cells 只保留左上角值，並以 `excel.merged_cells` warning 記錄範圍。
 - `excel.max_rows_per_sheet` 與 `excel.max_columns_per_sheet` 會在資料物化前限制每張工作表大小。
 
+### DOCX 輸出支援範圍
+
+- heading、paragraph、ordered/unordered list、table、image 與 page break 使用原生 Word 結構。
+- 套用固定 Letter/1-inch margin、Calibri semantic styles、真實 numbering definitions 與固定 DXA table geometry。
+- 本機圖片存在時安全嵌入；遠端、fragment、缺失或無法辨識的圖片保留 alt/caption，並回報 `docx.image_unavailable`。
+- 實際寫入仍由 `ConversionService` 使用 temporary file、atomic replace 與預設 no-overwrite。
+
 ## 目前骨架狀態
 
 - 已定義可序列化的 `DocumentIR`、block model、Parser/Exporter protocol。
 - 已提供 parser/exporter registry、ConversionService 與 CLI 契約。
-- Markdown／Excel／Docling parser、Markdown/JSON exporter、ConversionService 與 CLI 垂直切片已可使用。
-- PDF 已可經 Docling 轉成 `DocumentIR` 再輸出 Markdown；DOCX exporter 與 OCR adapter 仍保留後續 Stage 邊界。
+- Markdown／Excel／Docling parser、Markdown/JSON/DOCX exporter、ConversionService 與 CLI 垂直切片已可使用。
+- PDF 已可經 Docling 轉成 `DocumentIR` 再輸出 Markdown；DOCX 可由任一有效 `DocumentIR` 語意化輸出；OCR adapter 仍保留後續 Stage 邊界。
 - 骨架不宣稱已具備完整轉換能力；每一階段完成後都必須跑測試。
 
 ## 非目標

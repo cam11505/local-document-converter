@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from uuid import uuid4
 
+from local_document_converter.domain.models import DocumentWarning
 from local_document_converter.exceptions import InputValidationError, OutputExistsError
 from local_document_converter.exporters.base import ExportContext
 from local_document_converter.exporters.registry import ExporterRegistry
@@ -28,6 +29,7 @@ class ConversionResult:
     parser_name: str
     exporter_name: str
     warning_count: int
+    warnings: tuple[DocumentWarning, ...]
 
 
 class ConversionService:
@@ -59,18 +61,22 @@ class ConversionService:
         destination.parent.mkdir(parents=True, exist_ok=True)
         document = parser.parse(source, ParseContext())
         temporary = destination.with_name(f".{destination.name}.{uuid4().hex}.tmp")
+        export_context = ExportContext()
         try:
-            exporter.export(document, temporary, ExportContext())
+            exporter.export(document, temporary, export_context)
             temporary.replace(destination)
         finally:
             temporary.unlink(missing_ok=True)
+
+        warnings = tuple(document.warnings) + tuple(export_context.warnings)
 
         return ConversionResult(
             source=source,
             destination=destination,
             parser_name=parser.capability.name,
             exporter_name=exporter.capability.format_name,
-            warning_count=len(document.warnings),
+            warning_count=len(warnings),
+            warnings=warnings,
         )
 
     def _validate_source(self, source: Path) -> None:

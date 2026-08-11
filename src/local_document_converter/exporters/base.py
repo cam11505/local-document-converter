@@ -7,7 +7,7 @@ from typing import Protocol, runtime_checkable
 from pydantic import JsonValue
 
 from local_document_converter.capabilities import Availability, normalize_extension
-from local_document_converter.domain.models import DocumentIR
+from local_document_converter.domain.models import DocumentIR, DocumentWarning
 
 
 def normalize_format_name(format_name: str) -> str:
@@ -32,6 +32,7 @@ class ExporterCapability:
 @dataclass(frozen=True, slots=True)
 class ExportContext:
     options: dict[str, JsonValue] = field(default_factory=dict)
+    warnings: list[DocumentWarning] = field(default_factory=list)
 
 
 @runtime_checkable
@@ -39,5 +40,5 @@ class Exporter(Protocol):
     capability: ExporterCapability
 
     def export(self, document: DocumentIR, destination: Path, context: ExportContext) -> None:
-        """Write one DocumentIR to a temporary destination."""
+        """Write one DocumentIR to a temporary destination and append export warnings."""
         ...
