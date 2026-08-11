@@ -39,7 +39,7 @@ sample.pdf -> DoclingParser -> DocumentIR -> MarkdownExporter -> sample.md
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,docling]"
 Copy-Item .env.example .env
 Copy-Item config\settings.example.yaml config\settings.yaml
 python -m pytest
@@ -52,6 +52,22 @@ local-doc-convert --help
 local-doc-convert convert tests\fixtures\sample.md --to markdown --output work\sample.md
 local-doc-convert convert tests\fixtures\sample.md --to json --output work\sample.json
 local-doc-convert inspect tests\fixtures\sample.md
+```
+
+PDF 解析使用 optional Docling runtime。只需核心、Markdown、Excel 功能時可安裝
+`.[dev]`；需要 PDF/DOCX/Image 主解析路徑時安裝 `.[dev,docling]`。Docling 首次執行
+可能初始化或下載模型，因此真實 runtime 測試預設不隨 unit tests 執行。
+
+```powershell
+local-doc-convert convert tests\fixtures\sample.pdf --to markdown --output work\sample.pdf.md
+```
+
+真實 Docling integration tests 預設排除，避免在 unit test 階段初始化或下載模型；確認本機
+模型與 runtime 已就緒後才明確啟用：
+
+```powershell
+$env:LDC_RUN_DOCLING_INTEGRATION = "1"
+python -m pytest -m integration tests\test_docling_parser.py
 ```
 
 ### Markdown MVP 支援範圍
@@ -76,8 +92,8 @@ local-doc-convert inspect tests\fixtures\sample.md
 
 - 已定義可序列化的 `DocumentIR`、block model、Parser/Exporter protocol。
 - 已提供 parser/exporter registry、ConversionService 與 CLI 契約。
-- Markdown／Excel parser、Markdown/JSON exporter、ConversionService 與 CLI 垂直切片已可使用。
-- Docling、DOCX、OCR adapter 保留清楚的 `NotImplementedError` 邊界，交由 Stage prompts 逐步完成。
+- Markdown／Excel／Docling parser、Markdown/JSON exporter、ConversionService 與 CLI 垂直切片已可使用。
+- PDF 已可經 Docling 轉成 `DocumentIR` 再輸出 Markdown；DOCX exporter 與 OCR adapter 仍保留後續 Stage 邊界。
 - 骨架不宣稱已具備完整轉換能力；每一階段完成後都必須跑測試。
 
 ## 非目標

@@ -41,8 +41,11 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 開發安裝：
 
 ```powershell
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,docling]"
 ```
+
+若只開發不需要 Docling 的核心、Markdown 或 Excel 路徑，可改裝 `.[dev]`；PDF、
+DOCX、Image 主 parser 需要 `docling` extra。
 
 OCR 是 P1 optional。只有完成授權與環境確認後才安裝：
 
