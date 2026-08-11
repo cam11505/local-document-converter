@@ -4,6 +4,7 @@ import pytest
 
 from local_document_converter.capabilities import Availability
 from local_document_converter.domain import DocumentIR, SourceInfo
+from local_document_converter.domain.models import DocumentWarning
 from local_document_converter.exceptions import (
     DuplicateRegistrationError,
     ExporterUnavailableError,
@@ -189,9 +190,13 @@ def test_context_defaults_are_isolated() -> None:
 
     first_parse.options["mode"] = "first"
     first_export.options["mode"] = "first"
+    first_export.warnings.append(
+        DocumentWarning(code="export.warning", message="first context only")
+    )
 
     assert second_parse.options == {}
     assert second_export.options == {}
+    assert second_export.warnings == []
 
 
 def test_invalid_capability_metadata_is_rejected() -> None:
