@@ -9,6 +9,12 @@ class LocalDocumentConverterError(Exception):
     error_code: ClassVar[str] = "ldc.error"
 
 
+class ConfigurationError(LocalDocumentConverterError, ValueError):
+    """Application settings could not be loaded or validated."""
+
+    error_code = "config.invalid"
+
+
 class InputValidationError(LocalDocumentConverterError):
     """The input cannot safely be processed."""
 

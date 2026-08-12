@@ -68,10 +68,20 @@ ConverterFactory = Callable[[], _Converter]
 class DoclingParser:
     """Convert Docling's reading-order document model into the stable project IR."""
 
-    def __init__(self, *, converter_factory: ConverterFactory | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        converter_factory: ConverterFactory | None = None,
+        enabled: bool = True,
+    ) -> None:
         self._converter_factory = converter_factory
         availability = Availability()
-        if converter_factory is None and not _docling_is_installed():
+        if not enabled:
+            availability = Availability.unavailable(
+                "Docling is disabled by configuration",
+                install_hint="set docling.enabled=true to enable this parser",
+            )
+        elif converter_factory is None and not _docling_is_installed():
             availability = Availability.unavailable(
                 "Docling is not installed",
                 install_hint='install the optional dependency with pip install -e ".[docling]"',

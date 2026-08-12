@@ -6,8 +6,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from uuid import uuid4
 
-from local_document_converter.domain.models import DocumentWarning
-from local_document_converter.exceptions import InputValidationError, OutputExistsError
+from local_document_converter.domain.models import DocumentIR, DocumentWarning
+from local_document_converter.exceptions import (
+    ExportError,
+    InputValidationError,
+    OutputExistsError,
+)
 from local_document_converter.exporters.base import ExportContext
 from local_document_converter.exporters.registry import ExporterRegistry
 from local_document_converter.parsers.base import ParseContext
@@ -40,11 +44,13 @@ class ConversionService:
         *,
         output_directory: Path = Path("output"),
         max_file_size_mb: int = 100,
+        max_pages: int = 500,
     ) -> None:
         self._parsers = parsers
         self._exporters = exporters
         self._output_directory = output_directory
         self._max_file_size_bytes = max_file_size_mb * 1024 * 1024
+        self._max_pages = max_pages
 
     def convert(self, request: ConversionRequest) -> ConversionResult:
         source = request.source.expanduser().resolve()
@@ -58,13 +64,20 @@ class ConversionService:
         if destination.exists() and not request.overwrite:
             raise OutputExistsError(f"output already exists: {destination}")
 
-        destination.parent.mkdir(parents=True, exist_ok=True)
         document = parser.parse(source, ParseContext())
+        self._validate_document(document)
+        try:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            raise ExportError(f"could not create output directory: {destination.parent}") from exc
         temporary = destination.with_name(f".{destination.name}.{uuid4().hex}.tmp")
         export_context = ExportContext()
         try:
             exporter.export(document, temporary, export_context)
-            temporary.replace(destination)
+            try:
+                temporary.replace(destination)
+            except OSError as exc:
+                raise ExportError(f"could not atomically replace output: {destination}") from exc
         finally:
             temporary.unlink(missing_ok=True)
 
@@ -79,13 +92,34 @@ class ConversionService:
             warnings=warnings,
         )
 
+    def inspect(self, source: Path) -> DocumentIR:
+        """Parse one input through the same validation limits without writing output."""
+        resolved_source = source.expanduser().resolve()
+        self._validate_source(resolved_source)
+        document = self._parsers.for_path(resolved_source).parse(
+            resolved_source, ParseContext()
+        )
+        self._validate_document(document)
+        return document
+
     def _validate_source(self, source: Path) -> None:
-        if not source.exists():
+        try:
+            exists = source.exists()
+            is_file = source.is_file()
+            size = source.stat().st_size if exists and is_file else 0
+        except OSError as exc:
+            raise InputValidationError(f"input metadata could not be read: {source}") from exc
+        if not exists:
             raise InputValidationError(f"input does not exist: {source}")
-        if not source.is_file():
+        if not is_file:
             raise InputValidationError(f"input is not a file: {source}")
-        if source.stat().st_size > self._max_file_size_bytes:
+        if size > self._max_file_size_bytes:
             raise InputValidationError("input exceeds the configured file-size limit")
+
+    def _validate_document(self, document: DocumentIR) -> None:
+        page_count = document.metadata.page_count
+        if page_count is not None and page_count > self._max_pages:
+            raise InputValidationError("input exceeds the configured page-count limit")
 
     def _destination(
         self, request: ConversionRequest, source: Path, output_extension: str
