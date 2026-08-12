@@ -71,6 +71,30 @@ $env:LDC_RUN_DOCLING_INTEGRATION = "1"
 python -m pytest -m integration tests\test_docling_parser.py
 ```
 
+### CLI 與安全邊界
+
+三個命令都支援明確的 YAML 設定檔；`convert` 與 `inspect` 可用 `--verbose` 將
+parser、exporter、耗時、檔案大小與 warning code 寫到 stderr，不會記錄文件全文。
+
+```powershell
+local-doc-convert formats --config config\settings.yaml --verbose
+local-doc-convert inspect tests\fixtures\sample.md --config config\settings.yaml --verbose
+local-doc-convert convert tests\fixtures\sample.md --to json --output work\sample.json --config config\settings.yaml --verbose
+```
+
+設定優先序固定為 `CLI > LDC_* environment > YAML > defaults`。輸出預設禁止覆蓋；
+只有明確傳入 `--overwrite` 或較低層設定啟用時才會覆蓋。輸入與輸出不可是同一檔案，
+並套用檔案大小與頁數上限、同目錄 temporary file、atomic replace 及失敗／Ctrl-C cleanup。
+
+| Exit code | 意義 |
+|---:|---|
+| 0 | 成功 |
+| 1 | 已知解析、匯出或輸出衝突錯誤 |
+| 2 | 使用方式、設定、輸入或格式錯誤 |
+| 3 | optional parser／exporter 未安裝或已停用 |
+| 10 | 未預期內部錯誤 |
+| 130 | 使用者中斷（Ctrl-C） |
+
 ### Markdown MVP 支援範圍
 
 - ATX heading（`#`～`######`）、paragraph
@@ -99,7 +123,7 @@ python -m pytest -m integration tests\test_docling_parser.py
 ## 目前骨架狀態
 
 - 已定義可序列化的 `DocumentIR`、block model、Parser/Exporter protocol。
-- 已提供 parser/exporter registry、ConversionService 與 CLI 契約。
+- 已提供 parser/exporter registry、ConversionService 與完整 CLI 安全契約。
 - Markdown／Excel／Docling parser、Markdown/JSON/DOCX exporter、ConversionService 與 CLI 垂直切片已可使用。
 - PDF 已可經 Docling 轉成 `DocumentIR` 再輸出 Markdown；DOCX 可由任一有效 `DocumentIR` 語意化輸出；OCR adapter 仍保留後續 Stage 邊界。
 - 骨架不宣稱已具備完整轉換能力；每一階段完成後都必須跑測試。

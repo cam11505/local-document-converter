@@ -8,12 +8,15 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from pydantic_settings import (
     BaseSettings,
     EnvSettingsSource,
     SettingsConfigDict,
+    SettingsError,
 )
+
+from local_document_converter.exceptions import ConfigurationError
 
 
 def _merge_settings(
@@ -91,18 +94,35 @@ class Settings(BaseSettings):
 
         raw: dict[str, Any] = {}
         if config_path is not None:
-            if not config_path.is_file():
-                raise ValueError(f"settings YAML does not exist or is not a file: {config_path}")
-            loaded = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+            try:
+                is_file = config_path.is_file()
+            except OSError as exc:
+                raise ConfigurationError(
+                    f"settings YAML metadata could not be read: {config_path}"
+                ) from exc
+            if not is_file:
+                raise ConfigurationError(
+                    f"settings YAML does not exist or is not a file: {config_path}"
+                )
+            try:
+                loaded = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+            except (OSError, UnicodeError, yaml.YAMLError) as exc:
+                raise ConfigurationError(f"could not read settings YAML: {config_path}") from exc
             if not isinstance(loaded, dict):
-                raise ValueError("settings YAML root must be a mapping")
+                raise ConfigurationError("settings YAML root must be a mapping")
             raw = loaded
 
-        environment_values = EnvSettingsSource(cls)()
+        try:
+            environment_values = EnvSettingsSource(cls)()
+        except (SettingsError, ValueError) as exc:
+            raise ConfigurationError("environment settings validation failed") from exc
         merged = _merge_settings(raw, environment_values)
         if cli_overrides:
             merged = _merge_settings(merged, cli_overrides)
-        return cls(**merged)
+        try:
+            return cls(**merged)
+        except ValidationError as exc:
+            raise ConfigurationError("settings validation failed") from exc
 
     @classmethod
     def from_yaml(cls, path: Path | None = None) -> Settings:

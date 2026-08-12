@@ -276,7 +276,7 @@ def test_cli_reports_existing_and_unknown_output_errors(tmp_path: Path) -> None:
 
     assert existing_result.exit_code == 1
     assert "output already exists" in existing_result.stderr
-    assert unknown_result.exit_code == 1
+    assert unknown_result.exit_code == 2
     assert "unsupported output format" in unknown_result.stderr
 
 

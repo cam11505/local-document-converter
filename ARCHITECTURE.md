@@ -99,6 +99,7 @@ CLI options > environment variables > config/settings.yaml > built-in defaults
 ## 7. 例外與錯誤碼
 
 - `UnsupportedFormatError` (`format.unsupported`)：輸入或輸出格式不支援。
+- `ConfigurationError` (`config.invalid`)：YAML、環境變數或合併後設定無法讀取／驗證。
 - `DuplicateRegistrationError` (`registry.duplicate`)：adapter 名稱或格式重複註冊。
 - `InvalidAdapterError` (`adapter.invalid`)：物件不符合 Parser／Exporter Protocol。
 - `InputValidationError` (`input.invalid`)：檔案不存在、不可讀、大小超限。
@@ -106,7 +107,8 @@ CLI options > environment variables > config/settings.yaml > built-in defaults
 - `ParseError` / `ExportError` (`parse.failed` / `export.failed`)：adapter 執行失敗，保留 exception chaining。
 - `OutputExistsError` (`output.exists`)：未指定 overwrite 且目標存在。
 
-CLI 建議映射：一般錯誤 1、使用方式/輸入錯誤 2、optional capability unavailable 3、內部錯誤 10。
+CLI 映射：一般錯誤 1、使用方式／設定／輸入錯誤 2、optional capability unavailable 3、
+內部錯誤 10、使用者中斷 130。
 
 ## 8. 檔案與安全
 
