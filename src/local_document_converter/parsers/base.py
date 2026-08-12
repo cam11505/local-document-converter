@@ -39,3 +39,18 @@ class Parser(Protocol):
     def parse(self, source: Path, context: ParseContext) -> DocumentIR:
         """Parse one local file into the stable project IR."""
         ...
+
+
+@runtime_checkable
+class ParserFallback(Protocol):
+    """Secondary parser that may replace an insufficient primary parse."""
+
+    capability: ParserCapability
+
+    def should_run(self, source: Path, document: DocumentIR) -> bool:
+        """Return whether the primary result meets this fallback's trigger rules."""
+        ...
+
+    def parse(self, source: Path, context: ParseContext) -> DocumentIR:
+        """Parse one local file after the primary result triggered fallback."""
+        ...

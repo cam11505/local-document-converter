@@ -57,3 +57,14 @@ def test_settings_rejects_non_mapping_yaml(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="root must be a mapping"):
         Settings.load(config_path)
+
+
+def test_ocr_defaults_are_disabled_and_disallow_implicit_model_download() -> None:
+    settings = Settings()
+
+    assert settings.ocr.enabled is False
+    assert settings.ocr.allow_model_download is False
+    assert settings.ocr.detection_model_directory is None
+    assert settings.ocr.recognition_model_directory is None
+    assert settings.ocr.detection_model_id == "PP-OCRv5_mobile_det"
+    assert settings.ocr.recognition_model_id == "chinese_cht_PP-OCRv3_mobile_rec"

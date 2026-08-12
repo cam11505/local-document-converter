@@ -25,6 +25,7 @@ from local_document_converter.exporters.registry import ExporterRegistry
 from local_document_converter.parsers.docling_parser import DoclingParser
 from local_document_converter.parsers.excel_parser import ExcelParser
 from local_document_converter.parsers.markdown import MarkdownParser
+from local_document_converter.parsers.paddle_ocr import PaddleOcrFallback
 from local_document_converter.parsers.registry import ParserRegistry
 from local_document_converter.services.conversion_service import (
     ConversionRequest,
@@ -82,6 +83,7 @@ def _service(settings: Settings) -> ConversionService:
         output_directory=settings.output_directory,
         max_file_size_mb=settings.max_file_size_mb,
         max_pages=settings.max_pages,
+        parser_fallback=PaddleOcrFallback(settings.ocr),
     )
 
 
@@ -192,6 +194,15 @@ def formats_command(
                     f"Output exporter {exporter_capability.format_name}: {status}",
                     err=True,
                 )
+            fallback_capability = PaddleOcrFallback(settings.ocr).capability
+            fallback_status = (
+                "available" if fallback_capability.availability.available else "unavailable"
+            )
+            typer.echo(
+                f"Input fallback {fallback_capability.name}: {fallback_status} "
+                f"({', '.join(sorted(fallback_capability.supported_extensions))})",
+                err=True,
+            )
     except KeyboardInterrupt:
         _interrupted()
     except LocalDocumentConverterError as exc:

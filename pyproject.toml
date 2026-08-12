@@ -35,7 +35,8 @@ dev = [
   "types-PyYAML>=6.0.12",
 ]
 ocr = [
-  "paddleocr>=3,<4",
+  "paddleocr>=3.7,<3.8",
+  "paddlepaddle>=3.3,<3.4",
 ]
 
 [project.scripts]

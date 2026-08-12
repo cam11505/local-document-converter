@@ -18,3 +18,7 @@ python -m pytest -m "not integration and not ocr"
 python -m pytest -m integration
 python -m pytest -m ocr
 ```
+
+真實 PaddleOCR 測試需要先安裝 `.[ocr]`、下載並校驗 `config/ocr-models.yaml`
+所列模型，再設定 `LDC_OCR_DETECTION_MODEL_DIR`、`LDC_OCR_RECOGNITION_MODEL_DIR`
+與 `LDC_RUN_OCR_INTEGRATION=1`。預設測試不下載模型或執行 OCR runtime。
