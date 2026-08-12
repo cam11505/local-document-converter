@@ -60,9 +60,7 @@ def test_data_only_false_preserves_formula_text() -> None:
     assert isinstance(summary, TableBlock)
     assert summary.rows[2][4] == "=C3*D3"
     assert summary.rows[5][4] == "=SUM(E3:E5)"
-    assert "excel.formula_cache_missing" not in {
-        warning.code for warning in document.warnings
-    }
+    assert "excel.formula_cache_missing" not in {warning.code for warning in document.warnings}
 
 
 def test_missing_formula_cache_is_blank_but_retains_position_and_warns() -> None:
@@ -76,9 +74,7 @@ def test_missing_formula_cache_is_blank_but_retains_position_and_warns() -> None
 
     assert rows == [["標題"], [None]]
     assert (start_row, start_column) == (1, 1)
-    assert [warning.code for warning in warnings] == [
-        "excel.formula_cache_missing"
-    ]
+    assert [warning.code for warning in warnings] == ["excel.formula_cache_missing"]
     assert warnings[0].details["cells"] == ["A2"]
 
 
@@ -103,9 +99,7 @@ def test_blank_outer_ranges_are_trimmed_but_origin_is_recorded() -> None:
         ({"max_columns_per_sheet": 4}, "max_columns_per_sheet=4"),
     ],
 )
-def test_sheet_size_limits_are_enforced(
-    options: dict[str, JsonValue], message: str
-) -> None:
+def test_sheet_size_limits_are_enforced(options: dict[str, JsonValue], message: str) -> None:
     with pytest.raises(InputValidationError, match=message):
         ExcelParser().parse(SAMPLE, ParseContext(options=options))
 
@@ -154,9 +148,7 @@ def test_xlsx_to_markdown_and_json_are_deterministic(tmp_path: Path) -> None:
 
     markdown = first_markdown.read_text(encoding="utf-8")
     assert markdown == second_markdown.read_text(encoding="utf-8")
-    assert markdown == (FIXTURES / "expected" / "sample.xlsx.md").read_text(
-        encoding="utf-8"
-    )
+    assert markdown == (FIXTURES / "expected" / "sample.xlsx.md").read_text(encoding="utf-8")
     assert first_json.read_bytes() == second_json.read_bytes()
     restored = DocumentIR.from_json(first_json.read_text(encoding="utf-8"))
     assert [warning.code for warning in restored.warnings] == [

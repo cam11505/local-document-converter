@@ -221,20 +221,14 @@ class ExcelParser:
             width = max(len(value_row), len(formula_row))
             if width > max_columns:
                 raise InputValidationError(
-                    f"worksheet '{sheet_name}' exceeds "
-                    f"max_columns_per_sheet={max_columns}"
+                    f"worksheet '{sheet_name}' exceeds max_columns_per_sheet={max_columns}"
                 )
 
             normalized: list[str | None] = []
             for column_index in range(width):
                 value = value_row[column_index] if column_index < len(value_row) else None
-                formula = (
-                    formula_row[column_index] if column_index < len(formula_row) else None
-                )
-                if (
-                    isinstance(formula, str)
-                    and formula.startswith("=")
-                ):
+                formula = formula_row[column_index] if column_index < len(formula_row) else None
+                if isinstance(formula, str) and formula.startswith("="):
                     formula_cells.add((row_number - 1, column_index))
                     if value is None:
                         missing_formula_cells.append(

@@ -74,7 +74,7 @@ local-doc-convert --help
 local-doc-convert formats
 ```
 
-目前 adapter 仍是 skeleton 時，`convert` 對未完成格式應明確失敗，不能產生空白假輸出。
+optional adapter 未安裝或 runtime 失敗時，`convert` 必須明確失敗，不能產生空白假輸出。
 
 ## 6. 第一個 PDF -> Markdown
 
@@ -93,6 +93,9 @@ Get-Content work\sample.md -TotalCount 20
 
 - **模型第一次執行很慢**：Docling 可能下載/初始化模型；integration test 與 unit test 應分開。
 - **公司網路無法下載模型**：先使用不需模型的 Stage 1～5；不要關閉 TLS 驗證。
-- **路徑含中文或空白**：使用 `Path` 與引號；專案有義務以測試覆蓋。
+- **路徑含中文或空白**：adapter 已使用 PyPDFium2 backend 並關閉 `torch.compile` 以相容
+  Windows 非 ASCII 安裝路徑；命令中的路徑仍需加引號。
 - **套件編譯失敗**：先確認 Python 3.12 x64 與 pip 已更新，再查該版本官方 Windows wheel 支援。
 - **執行原則問題**：只對目前 PowerShell process 使用 Bypass，不要任意放寬整台電腦政策。
+
+完整診斷與 release gate 見 `docs/TROUBLESHOOTING.md`、`docs/RELEASE_CHECKLIST.md`。

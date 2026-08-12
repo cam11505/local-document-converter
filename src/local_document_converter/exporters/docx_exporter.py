@@ -74,9 +74,7 @@ class DocxExporter:
             raise ExportError(f"could not write DOCX output: {destination}") from exc
 
     @classmethod
-    def _configure_document(
-        cls, word_document: DocumentObject, document: DocumentIR
-    ) -> None:
+    def _configure_document(cls, word_document: DocumentObject, document: DocumentIR) -> None:
         section = word_document.sections[0]
         section.page_width = Inches(8.5)
         section.page_height = Inches(11)
@@ -297,9 +295,7 @@ class DocxExporter:
         properties.append(header)
 
     @classmethod
-    def _column_widths(
-        cls, rows: Sequence[Sequence[str | None]], width: int
-    ) -> list[int]:
+    def _column_widths(cls, rows: Sequence[Sequence[str | None]], width: int) -> list[int]:
         if width == 1:
             return [_CONTENT_WIDTH_DXA]
         weights = [

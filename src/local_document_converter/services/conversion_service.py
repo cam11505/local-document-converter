@@ -101,9 +101,7 @@ class ConversionService:
         """Parse one input through the same validation limits without writing output."""
         resolved_source = source.expanduser().resolve()
         self._validate_source(resolved_source)
-        document = self._parsers.for_path(resolved_source).parse(
-            resolved_source, ParseContext()
-        )
+        document = self._parsers.for_path(resolved_source).parse(resolved_source, ParseContext())
         document = self._apply_parser_fallback(resolved_source, document)
         self._validate_document(document)
         return document
@@ -176,9 +174,7 @@ class ConversionService:
             }
         )
 
-    def _destination(
-        self, request: ConversionRequest, source: Path, output_extension: str
-    ) -> Path:
+    def _destination(self, request: ConversionRequest, source: Path, output_extension: str) -> Path:
         if request.destination is not None:
             return request.destination.expanduser().resolve()
         return (self._output_directory / f"{source.stem}{output_extension}").resolve()

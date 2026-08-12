@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import importlib
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -56,9 +58,7 @@ class FakeItem:
     label: FakeEnum
     self_ref: str
     text: str = ""
-    prov: list[FakeProvenance] = field(
-        default_factory=lambda: [FakeProvenance(page_no=1)]
-    )
+    prov: list[FakeProvenance] = field(default_factory=lambda: [FakeProvenance(page_no=1)])
     level: int = 1
     enumerated: bool = False
     data: FakeTableData | None = None
@@ -177,9 +177,9 @@ def test_partial_result_preserves_text_and_reports_mapping_warnings() -> None:
         errors=[FakeError("one page was only partially parsed")],
     )
 
-    document = DoclingParser(
-        converter_factory=lambda: FakeConverter(result)
-    ).parse(SAMPLE, ParseContext())
+    document = DoclingParser(converter_factory=lambda: FakeConverter(result)).parse(
+        SAMPLE, ParseContext()
+    )
 
     assert isinstance(document.blocks[0], HeadingBlock)
     assert document.blocks[0].level == 6
@@ -200,9 +200,7 @@ def test_failed_conversion_reports_docling_error_without_returning_empty_ir() ->
     )
 
     with pytest.raises(ParseError, match="invalid or truncated PDF"):
-        DoclingParser(converter_factory=lambda: FakeConverter(result)).parse(
-            SAMPLE, ParseContext()
-        )
+        DoclingParser(converter_factory=lambda: FakeConverter(result)).parse(SAMPLE, ParseContext())
 
 
 def test_missing_optional_docling_runtime_is_reported_at_capability_boundary(
@@ -216,6 +214,61 @@ def test_missing_optional_docling_runtime_is_reported_at_capability_boundary(
     assert not parser.capability.availability.available
     with pytest.raises(ParserUnavailableError, match="optional dependency"):
         registry.for_path(SAMPLE)
+
+
+def test_default_factory_uses_unicode_safe_pdf_backend_and_disables_torch_compile(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    created: dict[str, object] = {}
+
+    class FakePipelineOptions:
+        def __init__(self) -> None:
+            self.layout_options = SimpleNamespace(engine_options=None)
+
+    class FakeEngineOptions:
+        def __init__(self, *, compile_model: bool) -> None:
+            self.compile_model = compile_model
+
+    class FakePdfFormatOption:
+        def __init__(self, *, pipeline_options: FakePipelineOptions, backend: object) -> None:
+            self.pipeline_options = pipeline_options
+            self.backend = backend
+
+    class FakeDocumentConverter:
+        def __init__(self, *, format_options: dict[object, object]) -> None:
+            created["format_options"] = format_options
+
+    fake_backend = object()
+    modules = {
+        "docling.backend.pypdfium2_backend": SimpleNamespace(PyPdfiumDocumentBackend=fake_backend),
+        "docling.datamodel.base_models": SimpleNamespace(InputFormat=SimpleNamespace(PDF="pdf")),
+        "docling.datamodel.object_detection_engine_options": SimpleNamespace(
+            TransformersObjectDetectionEngineOptions=FakeEngineOptions
+        ),
+        "docling.datamodel.pipeline_options": SimpleNamespace(
+            PdfPipelineOptions=FakePipelineOptions
+        ),
+        "docling.document_converter": SimpleNamespace(
+            DocumentConverter=FakeDocumentConverter,
+            PdfFormatOption=FakePdfFormatOption,
+        ),
+    }
+    monkeypatch.setattr(
+        importlib,
+        "import_module",
+        lambda name: modules[name],
+    )
+
+    converter = docling_adapter._load_converter_factory()()
+
+    assert isinstance(converter, FakeDocumentConverter)
+    format_options = created["format_options"]
+    assert isinstance(format_options, dict)
+    pdf_option = format_options["pdf"]
+    assert isinstance(pdf_option, FakePdfFormatOption)
+    assert pdf_option.backend is fake_backend
+    engine_options = pdf_option.pipeline_options.layout_options.engine_options
+    assert engine_options.compile_model is False
 
 
 @pytest.mark.integration

@@ -1,0 +1,29 @@
+# Stage 10 Release Checklist
+
+查核日期：2026-08-13。狀態：**MVP 技術候選完成，但不可正式發布**。
+
+## Product Spec / DoD 證據
+
+- [x] Python `>=3.12,<3.13`，全新 Windows Python 3.12.13 venv 安裝成功。
+- [x] README 的 `.[dev,docling]` 安裝命令可重現。
+- [x] `sample.pdf -> DocumentIR -> Markdown` 真實 integration 與 CLI smoke 成功。
+- [x] mocked unit tests 與 fixture/golden coverage 存在，真實 integration 預設 gated。
+- [x] `ruff check .`、`mypy src`、預設 `pytest` 需於提交前全部通過。
+- [x] Docling integration：2 passed；壞 PDF 不會產生假成功。
+- [x] `pip check`：無破損 requirements。
+- [x] 核心安全契約：no-overwrite、atomic replace、temporary cleanup、穩定 exit codes。
+- [x] verbose log 只含檔名（需 opt-in）、大小、adapter、耗時、warning code，不含全文。
+- [x] 檔案大小 100 MiB 與頁數 500 的預設限制已有測試。
+- [x] dev+Docling 與 OCR 兩個 profile 已產生 SPDX 2.3 SBOM。
+- [x] 效能、磁碟需求、模型冷啟動與 troubleshooting 已文件化。
+- [x] 版本建議與 changelog 已建立；建議解除 blockers 後發布 `0.1.0`。
+
+## 未完成／發布 blockers
+
+- [ ] 專案擁有者選定並加入根目錄 `LICENSE`，同步 `pyproject.toml` package metadata。
+- [ ] 法務／授權負責人複核 SBOM 中所有 `NOASSERTION` 與 wheel 內 LICENSE/NOTICE。
+- [ ] 若發布 OCR extra，先完成 `python-bidi`、`crc32c` 與模型權重的授權結論。
+- [ ] 若離線打包 Docling 模型，建立 model BOM 並保存 revision、checksum、授權與 notices。
+- [ ] 發布前在目標 Windows 機器以實際企業網路／離線策略重跑 cold-start smoke。
+
+任何 blocker 未完成時，不建立正式 release tag，不宣稱 release-ready 或 production-ready。

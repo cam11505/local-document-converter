@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib
 import importlib.util
 from collections.abc import Callable, Iterable, Sequence
 from pathlib import Path
@@ -28,9 +29,7 @@ from local_document_converter.exceptions import (
 )
 from local_document_converter.parsers.base import ParseContext, ParserCapability
 
-_SUPPORTED_EXTENSIONS = frozenset(
-    {".pdf", ".docx", ".png", ".jpg", ".jpeg", ".tif", ".tiff"}
-)
+_SUPPORTED_EXTENSIONS = frozenset({".pdf", ".docx", ".png", ".jpg", ".jpeg", ".tif", ".tiff"})
 _MEDIA_TYPES = {
     ".pdf": "application/pdf",
     ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -301,9 +300,7 @@ class DoclingParser:
         return None
 
     @staticmethod
-    def _map_table(
-        document: object, item: object, common: dict[str, object]
-    ) -> TableBlock | None:
+    def _map_table(document: object, item: object, common: dict[str, object]) -> TableBlock | None:
         data = _attribute(item, "data", None)
         grid = _attribute(data, "grid", None) if data is not None else None
         if not isinstance(grid, Sequence) or isinstance(grid, (str, bytes)):
@@ -347,12 +344,33 @@ def _docling_is_installed() -> bool:
 
 def _load_converter_factory() -> ConverterFactory:
     try:
-        from docling.document_converter import DocumentConverter
+        backend_module = importlib.import_module("docling.backend.pypdfium2_backend")
+        base_models_module = importlib.import_module("docling.datamodel.base_models")
+        engine_options_module = importlib.import_module(
+            "docling.datamodel.object_detection_engine_options"
+        )
+        pipeline_options_module = importlib.import_module("docling.datamodel.pipeline_options")
+        converter_module = importlib.import_module("docling.document_converter")
     except (ImportError, ModuleNotFoundError) as exc:
         raise ParserUnavailableError(
             'Docling is not installed; install it with pip install -e ".[docling]"'
         ) from exc
-    return cast(ConverterFactory, DocumentConverter)
+
+    def factory() -> _Converter:
+        pipeline_options = pipeline_options_module.PdfPipelineOptions()
+        pipeline_options.layout_options.engine_options = (
+            engine_options_module.TransformersObjectDetectionEngineOptions(compile_model=False)
+        )
+        pdf_option = converter_module.PdfFormatOption(
+            pipeline_options=pipeline_options,
+            backend=backend_module.PyPdfiumDocumentBackend,
+        )
+        converter = converter_module.DocumentConverter(
+            format_options={base_models_module.InputFormat.PDF: pdf_option}
+        )
+        return cast(_Converter, converter)
+
+    return factory
 
 
 def _attribute(value: object, name: str, default: object | None = None) -> object:

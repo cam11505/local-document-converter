@@ -29,9 +29,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 class FailingExporter:
     capability = ExporterCapability(format_name="failing", output_extension=".fail")
 
-    def export(
-        self, document: DocumentIR, destination: Path, context: ExportContext
-    ) -> None:
+    def export(self, document: DocumentIR, destination: Path, context: ExportContext) -> None:
         del document, context
         destination.write_text("partial", encoding="utf-8")
         raise ExportError("intentional exporter failure")
@@ -72,9 +70,7 @@ def test_fixture_markdown_to_markdown_matches_golden(
     assert source.read_bytes() == original
 
 
-def test_markdown_to_json_is_valid_document_ir(
-    service: ConversionService, tmp_path: Path
-) -> None:
+def test_markdown_to_json_is_valid_document_ir(service: ConversionService, tmp_path: Path) -> None:
     destination = tmp_path / "sample.json"
 
     service.convert(
@@ -125,9 +121,7 @@ def test_table_width_is_normalized_with_warning(tmp_path: Path) -> None:
     assert isinstance(table, TableBlock)
     assert table.column_names == ["A", "B", ""]
     assert table.rows == [["one", None, None], ["x", "y", "z"]]
-    assert [warning.code for warning in document.warnings] == [
-        "markdown.table_width_normalized"
-    ]
+    assert [warning.code for warning in document.warnings] == ["markdown.table_width_normalized"]
 
 
 def test_unsupported_markdown_is_preserved_and_warned_once_per_syntax(
@@ -191,9 +185,7 @@ def test_unknown_input_and_output_formats_are_rejected(
         service.convert(ConversionRequest(source=unknown_source, output_format="json"))
 
     with pytest.raises(UnsupportedFormatError):
-        service.convert(
-            ConversionRequest(source=FIXTURES / "sample.md", output_format="xml")
-        )
+        service.convert(ConversionRequest(source=FIXTURES / "sample.md", output_format="xml"))
 
 
 def test_input_and_output_paths_cannot_be_the_same(service: ConversionService) -> None:
@@ -234,9 +226,7 @@ def test_temporary_output_is_removed_when_export_fails(tmp_path: Path) -> None:
 def test_default_output_path_uses_configured_directory(
     service: ConversionService, tmp_path: Path
 ) -> None:
-    result = service.convert(
-        ConversionRequest(source=FIXTURES / "sample.md", output_format="json")
-    )
+    result = service.convert(ConversionRequest(source=FIXTURES / "sample.md", output_format="json"))
 
     assert result.destination == (tmp_path / "output" / "sample.json").resolve()
     assert result.destination.is_file()

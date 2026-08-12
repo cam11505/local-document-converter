@@ -39,22 +39,16 @@ class FakeExporter:
     def __init__(self, capability: ExporterCapability) -> None:
         self.capability = capability
 
-    def export(
-        self, document: DocumentIR, destination: Path, context: ExportContext
-    ) -> None:
+    def export(self, document: DocumentIR, destination: Path, context: ExportContext) -> None:
         del document, context
         destination.write_text("fake output\n", encoding="utf-8")
 
 
 def test_capability_metadata_is_normalized_and_satisfies_protocols() -> None:
     parser = FakeParser(
-        ParserCapability(
-            name=" fake-parser ", supported_extensions=frozenset({"PDF", " .Md "})
-        )
+        ParserCapability(name=" fake-parser ", supported_extensions=frozenset({"PDF", " .Md "}))
     )
-    exporter = FakeExporter(
-        ExporterCapability(format_name=" .JSON ", output_extension="JSON")
-    )
+    exporter = FakeExporter(ExporterCapability(format_name=" .JSON ", output_extension="JSON"))
 
     assert isinstance(parser, Parser)
     assert isinstance(exporter, Exporter)
@@ -143,9 +137,7 @@ def test_unavailable_parser_returns_stable_capability_error() -> None:
 
 
 def test_exporter_registry_normalizes_rejects_duplicates_and_lists_formats() -> None:
-    exporter = FakeExporter(
-        ExporterCapability(format_name=".JSON", output_extension="JSON")
-    )
+    exporter = FakeExporter(ExporterCapability(format_name=".JSON", output_extension="JSON"))
     registry = ExporterRegistry()
     registry.register(exporter)
 

@@ -19,9 +19,7 @@ from pydantic_settings import (
 from local_document_converter.exceptions import ConfigurationError
 
 
-def _merge_settings(
-    base: Mapping[str, Any], override: Mapping[str, Any]
-) -> dict[str, Any]:
+def _merge_settings(base: Mapping[str, Any], override: Mapping[str, Any]) -> dict[str, Any]:
     """Recursively merge one settings source over another."""
     merged = dict(base)
     for key, value in override.items():

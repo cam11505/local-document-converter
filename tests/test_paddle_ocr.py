@@ -120,9 +120,7 @@ def test_missing_optional_runtime_preserves_primary_and_gives_install_hint(
     document = _service(_primary_document(), fallback).inspect(SAMPLE)
 
     assert document.blocks == []
-    assert [warning.code for warning in document.warnings] == [
-        "ocr.fallback_unavailable"
-    ]
+    assert [warning.code for warning in document.warnings] == ["ocr.fallback_unavailable"]
     assert 'pip install -e ".[ocr]"' in document.warnings[0].message
 
 
@@ -222,9 +220,7 @@ def test_ocr_failure_preserves_primary_result() -> None:
 
 def test_model_manifest_has_traceable_source_checksum_license_and_notice() -> None:
     manifest = yaml.safe_load(
-        (Path(__file__).parents[1] / "config" / "ocr-models.yaml").read_text(
-            encoding="utf-8"
-        )
+        (Path(__file__).parents[1] / "config" / "ocr-models.yaml").read_text(encoding="utf-8")
     )
 
     assert manifest["license_evidence"]["notice"]
@@ -292,9 +288,7 @@ def test_real_paddleocr_sample_image() -> None:
 
     document = parser.parse(SAMPLE, ParseContext())
 
-    text = " ".join(
-        block.text for block in document.blocks if isinstance(block, ParagraphBlock)
-    )
+    text = " ".join(block.text for block in document.blocks if isinstance(block, ParagraphBlock))
     assert "Stage 9 OCR Sample" in text
     assert "Fallback text recovered" in text
 
@@ -307,9 +301,7 @@ def _service(primary: DocumentIR, fallback: PaddleOcrFallback) -> ConversionServ
     return ConversionService(parsers, exporters, parser_fallback=fallback)
 
 
-def _primary_document(
-    *, text: str | None = None, confidence: float | None = None
-) -> DocumentIR:
+def _primary_document(*, text: str | None = None, confidence: float | None = None) -> DocumentIR:
     blocks: list[ParagraphBlock] = []
     if text is not None:
         attributes = {} if confidence is None else {"confidence": confidence}

@@ -124,7 +124,7 @@
 ```text
 執行 Stage 9：加入可完全關閉、獨立安裝的 PaddleOCR fallback。
 
-前置條件：先閱讀 LICENSE_NOTES.md，並核對當前 PaddleOCR、推論引擎、預訓練模型與傳遞依賴的官方授權。若無法確認模型授權或安裝會引入不相容授權，停止並回報，不得自行繼續。
+前置條件：先閱讀 THIRD_PARTY_LICENSE_NOTES.md，並核對當前 PaddleOCR、推論引擎、預訓練模型與傳遞依賴的官方授權。若無法確認模型授權或安裝會引入不相容授權，停止並回報，不得自行繼續。
 
 要求：
 1. OCR 只在 settings 啟用且主 parser 判定文字不足/低信心時觸發。

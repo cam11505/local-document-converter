@@ -28,7 +28,11 @@ sample.pdf -> DoclingParser -> DocumentIR -> MarkdownExporter -> sample.md
 - `PRODUCT_SPEC.md`：產品範圍與 MVP 驗收條件
 - `ARCHITECTURE.md`：Document IR 與分層架構
 - `WINDOWS_SETUP.md`：Windows / Python 3.12 啟動步驟
-- `LICENSE_NOTES.md`：相依套件授權盤點與商用注意事項
+- `THIRD_PARTY_LICENSE_NOTES.md`：相依套件授權盤點與商用注意事項；不是本專案授權
+- `docs/DEPENDENCY_AUDIT.md`：Stage 10 SBOM 與人工授權 blockers
+- `docs/RELEASE_CHECKLIST.md`：MVP/DoD 驗證證據與 release gate
+- `docs/TROUBLESHOOTING.md`：模型下載、Windows 路徑與錯誤處理
+- `docs/PERFORMANCE.md`：Windows Python 3.12 smoke baseline
 - `tests/fixtures/README.md`：測試樣本規則
 
 ## 快速開始（Windows PowerShell）
@@ -68,7 +72,8 @@ local-doc-convert inspect tests\fixtures\sample.md
 
 PDF 解析使用 optional Docling runtime。只需核心、Markdown、Excel 功能時可安裝
 `.[dev]`；需要 PDF/DOCX/Image 主解析路徑時安裝 `.[dev,docling]`。Docling 首次執行
-可能初始化或下載模型，因此真實 runtime 測試預設不隨 unit tests 執行。
+可能初始化或下載模型，因此真實 runtime 測試預設不隨 unit tests 執行。企業／離線環境
+請先閱讀 `docs/TROUBLESHOOTING.md` 與 `docs/DEPENDENCY_AUDIT.md`。
 
 ```powershell
 local-doc-convert convert tests\fixtures\sample.pdf --to markdown --output work\sample.pdf.md
@@ -137,7 +142,7 @@ local-doc-convert convert tests\fixtures\sample.md --to json --output work\sampl
 - 已定義可序列化的 `DocumentIR`、block model、Parser/Exporter protocol。
 - 已提供 parser/exporter registry、ConversionService 與完整 CLI 安全契約。
 - Markdown／Excel／Docling parser、Markdown/JSON/DOCX exporter、ConversionService 與 CLI 垂直切片已可使用。
-- PDF 已可經 Docling 轉成 `DocumentIR` 再輸出 Markdown；DOCX 可由任一有效 `DocumentIR` 語意化輸出；OCR adapter 仍保留後續 Stage 邊界。
+- PDF 已可經 Docling 轉成 `DocumentIR` 再輸出 Markdown；DOCX 可由任一有效 `DocumentIR` 語意化輸出；PaddleOCR fallback 已實作為預設關閉的 optional extra。
 - 骨架不宣稱已具備完整轉換能力；每一階段完成後都必須跑測試。
 
 ## 非目標

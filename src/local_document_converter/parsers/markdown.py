@@ -81,9 +81,7 @@ class MarkdownParser:
                 index += 1
                 continue
 
-            if index + 1 < len(lines) and "|" in line and _TABLE_SEPARATOR.match(
-                lines[index + 1]
-            ):
+            if index + 1 < len(lines) and "|" in line and _TABLE_SEPARATOR.match(lines[index + 1]):
                 table_line = index + 1
                 column_names = self._cells(line)
                 index += 2
@@ -92,12 +90,8 @@ class MarkdownParser:
                     parsed_rows.append(self._cells(lines[index]))
                     index += 1
 
-                width = max(
-                    [len(column_names), *(len(row) for row in parsed_rows)], default=0
-                )
-                if len(column_names) != width or any(
-                    len(row) != width for row in parsed_rows
-                ):
+                width = max([len(column_names), *(len(row) for row in parsed_rows)], default=0)
+                if len(column_names) != width or any(len(row) != width for row in parsed_rows):
                     warnings.append(
                         DocumentWarning(
                             code="markdown.table_width_normalized",
@@ -158,9 +152,7 @@ class MarkdownParser:
                 paragraph_lines.append(candidate)
                 index += 1
             blocks.append(
-                ParagraphBlock(
-                    id=f"block-{order}", order=order, text=" ".join(paragraph_lines)
-                )
+                ParagraphBlock(id=f"block-{order}", order=order, text=" ".join(paragraph_lines))
             )
             order += 1
 
@@ -219,11 +211,7 @@ class MarkdownParser:
                 syntax = "nested_list"
             elif _THEMATIC_BREAK.fullmatch(stripped):
                 syntax = "thematic_break"
-            elif (
-                index > 0
-                and lines[index - 1].strip()
-                and _SETEXT_UNDERLINE.fullmatch(stripped)
-            ):
+            elif index > 0 and lines[index - 1].strip() and _SETEXT_UNDERLINE.fullmatch(stripped):
                 syntax = "setext_heading"
             if syntax is not None:
                 first_occurrence.setdefault(syntax, index + 1)

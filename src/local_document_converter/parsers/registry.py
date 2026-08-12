@@ -18,9 +18,7 @@ class ParserRegistry:
         self._by_name: dict[str, Parser] = {}
 
     def register(self, parser: Parser) -> None:
-        if not isinstance(parser, Parser) or not isinstance(
-            parser.capability, ParserCapability
-        ):
+        if not isinstance(parser, Parser) or not isinstance(parser.capability, ParserCapability):
             raise InvalidAdapterError("parser does not satisfy the Parser protocol")
         capability = parser.capability
         if capability.name in self._by_name:

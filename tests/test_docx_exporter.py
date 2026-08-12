@@ -53,9 +53,7 @@ def test_docx_export_preserves_semantic_blocks_images_and_warnings(
     restored = Document(str(destination))
 
     assert destination.is_file()
-    assert [warning.code for warning in context.warnings] == [
-        "docx.image_unavailable"
-    ]
+    assert [warning.code for warning in context.warnings] == ["docx.image_unavailable"]
     assert context.warnings[0].details["uri"] == "images/missing.png"
     assert restored.core_properties.title == "Stage 7 DOCX Sample"
     assert restored.sections[0].page_width == 7772400
@@ -106,9 +104,7 @@ def test_markdown_to_docx_uses_atomic_service_and_reports_export_warning(
     assert result.destination == destination.resolve()
     assert result.exporter_name == "docx"
     assert result.warning_count == 1
-    assert [warning.code for warning in result.warnings] == [
-        "docx.image_unavailable"
-    ]
+    assert [warning.code for warning in result.warnings] == ["docx.image_unavailable"]
     assert Document(str(destination)).tables[0].cell(1, 0).text == "A|B"
     assert not list(destination.parent.glob(".sample.docx.*.tmp"))
 

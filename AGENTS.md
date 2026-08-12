@@ -6,7 +6,7 @@
 
 ## 開始工作前
 
-1. 先閱讀 `PRODUCT_SPEC.md`、`ARCHITECTURE.md`、`LICENSE_NOTES.md`。
+1. 先閱讀 `PRODUCT_SPEC.md`、`ARCHITECTURE.md`、`THIRD_PARTY_LICENSE_NOTES.md`。
 2. 檢查目前 git 狀態與既有修改；不得覆蓋使用者未提交內容。
 3. 說明本次只處理哪個 Stage、會修改哪些檔案、如何驗收。
 4. 資訊不足且會改變公開介面、授權或資料安全時，停止並詢問；不得自行擴大需求。
