@@ -46,6 +46,18 @@ python -m pytest
 local-doc-convert --help
 ```
 
+PaddleOCR fallback 是獨立 optional extra，預設關閉且不自動下載模型：
+
+```powershell
+python -m pip install -e ".[ocr]"
+# 下載 config\ocr-models.yaml 列出的模型、核對 SHA-256、解壓至本機 models 目錄，
+# 再於 config\settings.yaml 設定 ocr.enabled 與兩個 model_directory。
+```
+
+只有影像的主 parser 結果文字少於 `ocr.min_text_characters`，或帶有低於
+`ocr.min_primary_confidence` 的 confidence 時才觸發 fallback。OCR 未安裝、模型未配置或
+執行失敗時會保留主 parser 結果並回報 warning；模型權重不納入 repository。
+
 目前可執行的 Markdown 轉換範例：
 
 ```powershell

@@ -53,7 +53,14 @@ class OcrSettings(BaseModel):
     enabled: bool = False
     languages: list[str] = Field(default_factory=lambda: ["ch", "en"])
     min_text_characters: int = Field(default=40, ge=0)
+    min_primary_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
     model_cache_directory: Path = Path(".model-cache")
+    allow_model_download: bool = False
+    detection_model_id: str = "PP-OCRv5_mobile_det"
+    detection_model_directory: Path | None = None
+    recognition_model_id: str = "chinese_cht_PP-OCRv3_mobile_rec"
+    recognition_model_directory: Path | None = None
+    device: str = "cpu"
 
 
 class LoggingSettings(BaseModel):

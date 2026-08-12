@@ -1,0 +1,23 @@
+schema_version: "1.0"
+reviewed_on: "2026-08-12"
+runtime:
+  paddleocr: ">=3.7,<3.8"
+  paddlepaddle: ">=3.3,<3.4"
+  engine: paddle
+license_evidence:
+  code: https://github.com/PaddlePaddle/PaddleOCR/blob/main/LICENSE
+  pretrained_models: https://github.com/PaddlePaddle/PaddleOCR/issues/8780#issuecomment-1371724255
+  notice: Official model archives contain no separate NOTICE file; retain this manifest and Apache-2.0 attribution.
+models:
+  detection:
+    id: PP-OCRv5_mobile_det
+    version: PP-OCRv5
+    source: https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/PP-OCRv5_mobile_det_infer.tar
+    archive_sha256: 50446e5d01ac2a73d5319c89513281f6578414c888c602f9af13f93feefffc58
+    license: Apache-2.0
+  recognition:
+    id: chinese_cht_PP-OCRv3_mobile_rec
+    version: PP-OCRv3
+    source: https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/chinese_cht_PP-OCRv3_mobile_rec_infer.tar
+    archive_sha256: f03bd54fe9911a6a10a09956cae570294eb55c61096a12e437d5eb9501f52288
+    license: Apache-2.0
