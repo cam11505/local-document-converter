@@ -162,4 +162,6 @@ local-doc-convert convert tests\fixtures\sample.md --to json --output work\sampl
 ## License
 
 本專案程式碼採用 [MIT License](LICENSE)。第三方套件、原生函式庫與模型權重仍適用
-各自的授權條款；詳見 `THIRD_PARTY_LICENSE_NOTES.md` 與 `docs/DEPENDENCY_AUDIT.md`。
+各自的授權條款；詳見 `THIRD_PARTY_NOTICES.md`、`THIRD_PARTY_LICENSE_NOTES.md` 與
+`docs/DEPENDENCY_AUDIT.md`。`v0.1.0` 的認證範圍為 core + Docling；OCR 為預覽功能，
+不納入正式重分發範圍。

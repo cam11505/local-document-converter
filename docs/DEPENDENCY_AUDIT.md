@@ -39,7 +39,7 @@ Docling package metadata 宣告 MIT；PaddleOCR 與 PaddlePaddle 官方專案宣
 
 ## 發布判定
 
-- 核心 + Docling MVP：技術路徑與專案 MIT License 已完成，但人工 notice review 未完成，
-  仍不可標示 release-ready。
+- 核心 + Docling MVP：技術路徑、專案 MIT License、Wheel 邊界與 notices 已完成；本專案
+  Wheel 不重分發第三方 binary 或模型。精確 Release commit 的 CI/RC workflow 通過後可發布。
 - PaddleOCR optional extra：mocked coverage 完成；在 `python-bidi`、`crc32c` 與模型授權完成
-  人工／法務複核前，不納入正式發布包。
+  人工／法務複核前，不納入 `v0.1.0` 認證或離線重分發範圍。
