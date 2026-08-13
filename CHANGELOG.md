@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-13
+
 ### Added
 
 - Markdown、Excel、Docling parser 與 PaddleOCR optional fallback。
@@ -23,7 +25,7 @@
 - 預設禁止覆蓋、使用同目錄 temporary file 與 atomic replace，不記錄文件全文。
 - OCR 模型預設不下載、不提交至 repository，必須明確配置本機模型路徑。
 
-## 版本建議
+## 發布範圍
 
-- 完成人工第三方／模型授權複核後，建立 `0.1.0` MVP release。
-- 在 blockers 關閉前維持 `Unreleased`，不建立正式 tag 或宣稱 production-ready。
+- `0.1.0` 認證 core + Docling 文件轉換路徑，Release Wheel 不捆綁第三方 binary 或模型。
+- PaddleOCR fallback 保留為預覽 optional extra，不納入 `0.1.0` 認證或離線重分發範圍。

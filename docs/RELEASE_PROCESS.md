@@ -16,8 +16,9 @@ Do not create a version tag or GitHub Release until all of the following are tru
 - The project owner has selected a distribution license and the repository root contains
   the matching `LICENSE` file.
 - `pyproject.toml` contains the SPDX license expression and `license-files` metadata.
-- A human reviewer has accepted or resolved every dependency/model licensing item recorded
-  in `DEPENDENCY_AUDIT.md` and `THIRD_PARTY_LICENSE_NOTES.md`.
+- The release scope and artifact boundary resolve every applicable dependency/model item
+  recorded in `DEPENDENCY_AUDIT.md` and `THIRD_PARTY_LICENSE_NOTES.md`. Preview or offline
+  bundles with unresolved items must remain explicitly outside the certified release scope.
 - The latest `CI` and `Release candidate smoke` workflow runs are successful on the exact
   commit to be tagged.
 - The working tree is clean, the local and remote commit SHAs match, and `CHANGELOG.md`

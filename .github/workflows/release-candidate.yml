@@ -52,6 +52,12 @@ jobs:
           python -m pip install "build>=1.2,<2"
           python -m build
 
+      - name: Verify release artifact boundary
+        shell: pwsh
+        run: |
+          $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
+          python scripts\verify_release_artifact.py $wheel.FullName
+
       - name: Upload release-candidate artifacts
         uses: actions/upload-artifact@v4
         with:
