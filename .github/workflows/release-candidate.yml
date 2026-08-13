@@ -1,0 +1,62 @@
+name: Release candidate smoke
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-docling:
+    name: Windows / Python 3.12 / Docling
+    runs-on: windows-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install release-candidate dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,docling]"
+          python -m pip check
+
+      - name: Static and default test suite
+        run: |
+          python -m ruff check .
+          python -m ruff format --check src tests scripts
+          python -m mypy src tests scripts
+          python -m pytest -q -m "not integration and not ocr"
+
+      - name: Real Docling integration
+        env:
+          LDC_RUN_DOCLING_INTEGRATION: "1"
+        run: python -m pytest -q -m integration tests/test_docling_parser.py
+
+      - name: Real PDF CLI smoke
+        run: |
+          New-Item -ItemType Directory -Force -Path work | Out-Null
+          local-doc-convert convert tests\fixtures\sample.pdf --to markdown --output work\sample.pdf.md
+          if (-not (Test-Path work\sample.pdf.md)) { throw "CLI did not create Markdown output" }
+
+      - name: Build wheel
+        run: |
+          python -m pip install "build>=1.2,<2"
+          python -m build
+
+      - name: Upload release-candidate artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-py312-release-candidate
+          path: |
+            dist/*
+            work/sample.pdf.md
+          if-no-files-found: error
