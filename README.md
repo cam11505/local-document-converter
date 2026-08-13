@@ -158,3 +158,8 @@ local-doc-convert convert tests\fixtures\sample.md --to json --output work\sampl
 2. 先讓 Codex 閱讀 `AGENTS.md`、`PRODUCT_SPEC.md`、`ARCHITECTURE.md`。
 3. 貼上 `CODEX_MASTER_PROMPT.md`。
 4. 依 `CODEX_STAGE_PROMPTS.md` 一次執行一個 Stage；每階段驗收後再繼續。
+
+## License
+
+本專案程式碼採用 [MIT License](LICENSE)。第三方套件、原生函式庫與模型權重仍適用
+各自的授權條款；詳見 `THIRD_PARTY_LICENSE_NOTES.md` 與 `docs/DEPENDENCY_AUDIT.md`。

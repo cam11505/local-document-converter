@@ -22,7 +22,7 @@
 
 ## 未完成／發布 blockers
 
-- [ ] 專案擁有者選定並加入根目錄 `LICENSE`，同步 `pyproject.toml` package metadata。
+- [x] 專案擁有者已選定 MIT，根目錄 `LICENSE` 與 PEP 639 package metadata 已同步。
 - [ ] 法務／授權負責人複核 SBOM 中所有 `NOASSERTION` 與 wheel 內 LICENSE/NOTICE。
 - [ ] 若發布 OCR extra，先完成 `python-bidi`、`crc32c` 與模型權重的授權結論。
 - [ ] 若離線打包 Docling 模型，建立 model BOM 並保存 revision、checksum、授權與 notices。
