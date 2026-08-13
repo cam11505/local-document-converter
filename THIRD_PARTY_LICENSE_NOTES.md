@@ -1,4 +1,23 @@
-# License Notes
+# Third-Party License Notes
+
+## Stage 9 OCR review (2026-08-12)
+
+- PaddleOCR 3.7.0、PaddleX 3.7.2 與 PaddlePaddle 3.3.1 wheel metadata 均標示 Apache-2.0；
+  PaddlePaddle 提供 Python 3.12 Windows x64 wheel。
+- PaddleOCR collaborator 在預訓練模型授權 issue #8780 明確回覆所列 models 均為
+  Apache-2.0。採用模型的 ID、來源、SHA-256 與 attribution 記錄於
+  `config/ocr-models.yaml`，不提交權重，也不在預設設定自動下載。
+- Stage 10 重新解析確認 `crc32c` 為 LGPL-2.1-or-later；`python-bidi 0.6.11` metadata
+  未宣告 SPDX，wheel 同時附 GPLv3、LGPLv3 與第三方授權清單。先前「未發現 GPL」與
+  單純標示 `python-bidi` 為 LGPL 的結論不再有效，OCR 發布前必須人工／法務複核。
+
+## Stage 10 release audit (2026-08-13)
+
+- 已產生 `sbom/windows-py312-dev-docling.spdx.json` 與
+  `sbom/windows-py312-ocr.spdx.json`；詳細結論見 `docs/DEPENDENCY_AUDIT.md`。
+- 預設 Docling profile 未安裝 PyMuPDF、PaddleOCR 或 PaddlePaddle。
+- 專案目前沒有正式根目錄 `LICENSE`，在擁有者選定授權並同步 package metadata 前，
+  不可宣稱 release-ready。
 
 > 這是工程盤點，不是法律意見。正式對外或閉源商用發布前，必須鎖定實際版本、產生完整 dependency tree/SBOM，並由法務或授權負責人複核。
 

@@ -11,15 +11,17 @@
 
 | 檔案 | Stage | 內容與驗收 |
 |---|---:|---|
-| `sample.md` | 4 | heading、paragraph、list、pipe table、image reference |
-| `sample.xlsx` | 5 | 多 sheet、中文、日期、公式、merged cells |
-| `sample.pdf` | 6 | 自製一頁或兩頁 PDF，含標題、段落、小表格 |
+| `sample.md` | 4 | 2026-08-11 由專案自行撰寫；虛構中文內容，涵蓋 heading、paragraph、ordered/unordered list、escaped pipe table、image reference，可自由隨本專案重分發 |
+| `sample.xlsx` | 5 | 2026-08-11 由 `@oai/artifact-tool` 2.8.6+ 自行產生；虛構中文內容，含「摘要」與「空白與合併」兩張 sheet、日期、公式、內部空白列與 merged cells；可自由隨本專案重分發；SHA-256 `fa312bd4de6696802862b1c58f51b6c1deaca8c86563404d21cf3252bce5dcf0` |
+| `sample.pdf` | 6 | 2026-08-11 以同目錄 `generate_sample_pdf.py` 與 ReportLab 4.4.9 自製；單頁 Letter fixture，含 heading、paragraph、list、table 與簡圖；專案可再散布；SHA-256 `80e1d6b5589ffd78771514de828169d8811a711cea4acfb823d0f2e60c5b9439`。 |
 | `sample.docx` | 6/7 | 自製 heading、paragraph、list、table |
-| `sample.png` | 6/9 | 自製清楚中英文文字圖片 |
+| `sample.png` | 9 | 2026-08-13 由 `generate_sample_image.py` 與 Pillow 產生；自製英文 OCR fixture，SHA-256 `233f18f48434bf34b87ad97175ef11dc262e01eb68cb8bc74e4d5f3938b8d459` |
 | `expected/*.md` | 各 Stage | 經正規化的 deterministic golden output |
 
 每次新增 binary fixture，需在本檔補充：產生工具與版本、產生日期、內容來源、授權/重分發依據、SHA-256、預期覆蓋行為。
 
 ## sample.pdf 建議產生方式
 
-Stage 6 可用測試專用 generator 產生一份完全自製的 PDF。Generator 可以使用只放在 dev/test dependency 的 permissive library，但不可讓它成為 runtime parser。產生後固定 binary fixture 與 SHA-256；unit tests 不應每次重建造成 binary diff。
+Stage 6 使用 `generate_sample_pdf.py` 產生固定的最小、自製 PDF；ReportLab 只用於重建
+fixture，不是 runtime parser dependency。`Canvas(invariant=1)` 讓 metadata 與 binary 可重現；unit
+tests 直接讀取已提交的 fixture，不會每次重建。

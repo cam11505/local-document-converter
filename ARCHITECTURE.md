@@ -44,10 +44,12 @@ DocumentIR
 
 ### IR 規則
 
-- `schema_version` 使用明確字串（初版 `1.0`）。
-- block 順序必須確定且可重現。
-- `page_number` 為 1-based；無頁概念時為 `null`。
-- table cell 值正規化為字串或 `null`，不可放第三方物件。
+- `schema_version` 固定為明確字串（初版 `1.0`），未知欄位一律拒絕。
+- block `id` 不可為空且在文件內唯一；`order` 從 0 開始、連續，並須與 `blocks` 陣列順序一致。
+- `page_number` 為 1-based；無頁概念時為 `null`；若 metadata 有 `page_count`，block 與 warning 頁碼不得超出範圍。
+- table cell 只能是字串或 `null`；空字串與 `null` 語意不同。每列欄數必須一致，若有 `column_names`，其長度必須與資料列相同；空表允許存在。
+- `attributes`、metadata `custom` 與 warning `details` 只能包含可序列化 JSON 值，拒絕非有限浮點數與第三方物件。
+- 官方 JSON 使用 UTF-8 文字與穩定 key 排序，確保相同 IR 產生 deterministic output 並可完整 round-trip。
 - 圖片可先保存相對參照；binary 不直接塞進 JSON。
 - Parser 無法保留的資訊以 warning 回報，不可靜默丟失。
 
@@ -57,18 +59,21 @@ DocumentIR
 
 ```python
 class Parser(Protocol):
-    supported_extensions: frozenset[str]
+    capability: ParserCapability
     def parse(self, source: Path, context: ParseContext) -> DocumentIR: ...
 ```
+
+`ParserCapability` 包含穩定名稱、正規化副檔名與 availability。Registry 先完整檢查名稱及所有副檔名衝突，再以原子方式註冊；已知但不可用的 parser 回傳 `ParserUnavailableError`，不可延後成 `NotImplementedError`。
 
 ### Exporter
 
 ```python
 class Exporter(Protocol):
-    format_name: str
-    output_extension: str
+    capability: ExporterCapability
     def export(self, document: DocumentIR, destination: Path, context: ExportContext) -> None: ...
 ```
+
+`ExporterCapability` 包含正規化 format name、輸出副檔名與 availability。未知格式與已知但不可用的 exporter 必須使用不同專案例外。
 
 ### ConversionService
 
@@ -93,13 +98,17 @@ CLI options > environment variables > config/settings.yaml > built-in defaults
 
 ## 7. 例外與錯誤碼
 
-- `UnsupportedFormatError`：輸入或輸出格式不支援。
-- `InputValidationError`：檔案不存在、不可讀、大小超限。
-- `ParserUnavailableError`：optional dependency 未安裝。
-- `ParseError` / `ExportError`：adapter 失敗，保留 exception chaining。
-- `OutputExistsError`：未指定 overwrite 且目標存在。
+- `UnsupportedFormatError` (`format.unsupported`)：輸入或輸出格式不支援。
+- `ConfigurationError` (`config.invalid`)：YAML、環境變數或合併後設定無法讀取／驗證。
+- `DuplicateRegistrationError` (`registry.duplicate`)：adapter 名稱或格式重複註冊。
+- `InvalidAdapterError` (`adapter.invalid`)：物件不符合 Parser／Exporter Protocol。
+- `InputValidationError` (`input.invalid`)：檔案不存在、不可讀、大小超限。
+- `ParserUnavailableError` / `ExporterUnavailableError` (`parser.unavailable` / `exporter.unavailable`)：已知 capability 尚未實作或 optional dependency 未安裝。
+- `ParseError` / `ExportError` (`parse.failed` / `export.failed`)：adapter 執行失敗，保留 exception chaining。
+- `OutputExistsError` (`output.exists`)：未指定 overwrite 且目標存在。
 
-CLI 建議映射：一般錯誤 1、使用方式/輸入錯誤 2、optional capability unavailable 3、內部錯誤 10。
+CLI 映射：一般錯誤 1、使用方式／設定／輸入錯誤 2、optional capability unavailable 3、
+內部錯誤 10、使用者中斷 130。
 
 ## 8. 檔案與安全
 

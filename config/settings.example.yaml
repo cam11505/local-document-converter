@@ -21,7 +21,14 @@ ocr:
     - ch
     - en
   min_text_characters: 40
+  min_primary_confidence: 0.5
   model_cache_directory: .model-cache
+  allow_model_download: false
+  detection_model_id: PP-OCRv5_mobile_det
+  detection_model_directory: null
+  recognition_model_id: chinese_cht_PP-OCRv3_mobile_rec
+  recognition_model_directory: null
+  device: cpu
 
 logging:
   level: INFO

@@ -15,7 +15,6 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  "docling>=2,<3",
   "openpyxl>=3.1,<4",
   "python-docx>=1.1,<2",
   "pydantic>=2.8,<3",
@@ -25,15 +24,21 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+docling = [
+  "docling>=2.119,<2.120",
+  "pypdfium2>=5.12,<6",
+]
 dev = [
   "mypy>=1.11,<2",
+  "Pillow>=10,<13",
   "pytest>=8.2,<9",
   "pytest-cov>=5,<7",
   "ruff>=0.6,<1",
   "types-PyYAML>=6.0.12",
 ]
 ocr = [
-  "paddleocr>=3,<4",
+  "paddleocr>=3.7,<3.8",
+  "paddlepaddle>=3.3,<3.4",
 ]
 
 [project.scripts]

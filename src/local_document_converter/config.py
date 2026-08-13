@@ -8,17 +8,18 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from pydantic_settings import (
     BaseSettings,
     EnvSettingsSource,
     SettingsConfigDict,
+    SettingsError,
 )
 
+from local_document_converter.exceptions import ConfigurationError
 
-def _merge_settings(
-    base: Mapping[str, Any], override: Mapping[str, Any]
-) -> dict[str, Any]:
+
+def _merge_settings(base: Mapping[str, Any], override: Mapping[str, Any]) -> dict[str, Any]:
     """Recursively merge one settings source over another."""
     merged = dict(base)
     for key, value in override.items():
@@ -50,7 +51,14 @@ class OcrSettings(BaseModel):
     enabled: bool = False
     languages: list[str] = Field(default_factory=lambda: ["ch", "en"])
     min_text_characters: int = Field(default=40, ge=0)
+    min_primary_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
     model_cache_directory: Path = Path(".model-cache")
+    allow_model_download: bool = False
+    detection_model_id: str = "PP-OCRv5_mobile_det"
+    detection_model_directory: Path | None = None
+    recognition_model_id: str = "chinese_cht_PP-OCRv3_mobile_rec"
+    recognition_model_directory: Path | None = None
+    device: str = "cpu"
 
 
 class LoggingSettings(BaseModel):
@@ -91,18 +99,35 @@ class Settings(BaseSettings):
 
         raw: dict[str, Any] = {}
         if config_path is not None:
-            if not config_path.is_file():
-                raise ValueError(f"settings YAML does not exist or is not a file: {config_path}")
-            loaded = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+            try:
+                is_file = config_path.is_file()
+            except OSError as exc:
+                raise ConfigurationError(
+                    f"settings YAML metadata could not be read: {config_path}"
+                ) from exc
+            if not is_file:
+                raise ConfigurationError(
+                    f"settings YAML does not exist or is not a file: {config_path}"
+                )
+            try:
+                loaded = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+            except (OSError, UnicodeError, yaml.YAMLError) as exc:
+                raise ConfigurationError(f"could not read settings YAML: {config_path}") from exc
             if not isinstance(loaded, dict):
-                raise ValueError("settings YAML root must be a mapping")
+                raise ConfigurationError("settings YAML root must be a mapping")
             raw = loaded
 
-        environment_values = EnvSettingsSource(cls)()
+        try:
+            environment_values = EnvSettingsSource(cls)()
+        except (SettingsError, ValueError) as exc:
+            raise ConfigurationError("environment settings validation failed") from exc
         merged = _merge_settings(raw, environment_values)
         if cli_overrides:
             merged = _merge_settings(merged, cli_overrides)
-        return cls(**merged)
+        try:
+            return cls(**merged)
+        except ValidationError as exc:
+            raise ConfigurationError("settings validation failed") from exc
 
     @classmethod
     def from_yaml(cls, path: Path | None = None) -> Settings:
