@@ -1,6 +1,6 @@
 # Stage 10 Release Checklist
 
-查核日期：2026-08-13。狀態：**MVP 技術候選完成，但不可正式發布**。
+查核日期：2026-08-13。狀態：**`v0.1.0` core + Docling 認證範圍可正式發布**。
 
 ## Product Spec / DoD 證據
 
@@ -21,13 +21,14 @@
 - [x] 手動 `Release candidate smoke` 已定義：Docling 真實 integration、PDF CLI 與 release artifact。
 - [x] Release Wheel 邊界已驗證：只含本專案 package／metadata／MIT LICENSE，不捆綁第三方 binary 或模型。
 
-## 未完成／發布 blockers
+## 發布 gate 與範圍排除
 
 - [x] 專案擁有者已選定 MIT，根目錄 `LICENSE` 與 PEP 639 package metadata 已同步。
 - [x] `v0.1.0` artifact notices 與重分發邊界已記錄；第三方依賴由 pip 分開安裝，不打入本專案 Wheel。
 - [x] OCR 明確排除於 `v0.1.0` 認證／重分發範圍；需另案完成 `python-bidi`、`crc32c` 與模型權重複核。
-- [ ] 若離線打包 Docling 模型，建立 model BOM 並保存 revision、checksum、授權與 notices。
+- [x] `v0.1.0` 不離線打包 Docling 模型；未來若加入，必須先建立 model BOM 與 notices。
 - [x] GitHub Windows runner 已重跑全新環境 cold-start smoke，含 Docling 模型初始化。
-- [ ] 在預定 tag commit 上確認 GitHub Actions `CI` 與 `Release candidate smoke` 均成功。
+- [x] 在預定 release commit 上確認 GitHub Actions `CI` 與 `Release candidate smoke` 均成功。
 
-任何 blocker 未完成時，不建立正式 release tag，不宣稱 release-ready 或 production-ready。
+本判定只涵蓋 README 與 Changelog 定義的 core + Docling 範圍；PaddleOCR、離線模型包與
+第三方 Wheel 重分發不在 `v0.1.0` 認證範圍內，不得延伸宣稱為已通過發布審查。

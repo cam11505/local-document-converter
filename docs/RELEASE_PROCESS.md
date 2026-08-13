@@ -26,3 +26,10 @@ Do not create a version tag or GitHub Release until all of the following are tru
 
 After those gates pass, create the annotated `v0.1.0` tag from `main`, push it, and publish
 the GitHub Release using the validated wheel artifact and changelog entry.
+
+## v0.1.0 evidence
+
+- Certified scope: core + Docling; PaddleOCR and offline model bundles are excluded.
+- Windows Python 3.12 CI and release-candidate smoke run on the exact release commit.
+- The release-candidate artifact is downloaded and rechecked before tag and Release creation.
+- SHA-256 checksums are published with the Wheel and source archive.
