@@ -6,8 +6,8 @@
 
 | Profile | 來源 | 套件數 | `NOASSERTION` |
 |---|---|---:|---:|
-| Windows Python 3.12 dev + Docling | 全新 venv 實際安裝 | 118 | 17 |
-| Windows Python 3.12 OCR | pip resolver dry-run，未安裝 | 80 | 10 |
+| Windows Python 3.12 dev + Docling | 全新 venv 實際安裝 | 118 | 16 |
+| Windows Python 3.12 OCR | pip resolver dry-run，未安裝 | 80 | 9 |
 
 - SPDX 2.3 SBOM：`sbom/windows-py312-dev-docling.spdx.json`
 - SPDX 2.3 SBOM：`sbom/windows-py312-ocr.spdx.json`
@@ -30,7 +30,7 @@ Docling package metadata 宣告 MIT；PaddleOCR 與 PaddlePaddle 官方專案宣
 
 | 項目 | 發現 | 結論 |
 |---|---|---|
-| 專案本身 | 沒有根目錄 `LICENSE`，package metadata 未宣告授權 | 正式發布 blocker；由擁有者／法務選定，不由工程端假設 |
+| 專案本身 | 擁有者已選定 MIT；根目錄 `LICENSE` 與 PEP 639 metadata 已加入 | 已解除；不代表第三方與模型授權已完成複核 |
 | `crc32c 2.8` | OCR transitive dependency，metadata 為 LGPL-2.1-or-later，另含 BSD/custom code | OCR 商用散布前確認 notice、source offer 與動態連結義務 |
 | `python-bidi 0.6.11` | metadata 無 SPDX；wheel 同時附 GPLv3、LGPLv3 與 third-party 清單 | 授權結論不明，OCR 發布 blocker |
 | `pypdfium2 5.12.1` | metadata 為 BSD-3-Clause、Apache-2.0 與 dependency licenses 的複合描述 | 保留 wheel notices，人工確認 PDFium 第三方清單 |
@@ -39,7 +39,7 @@ Docling package metadata 宣告 MIT；PaddleOCR 與 PaddlePaddle 官方專案宣
 
 ## 發布判定
 
-- 核心 + Docling MVP：技術路徑已驗證，但專案 LICENSE 與人工 notice review 未完成，
-  不可標示 release-ready。
+- 核心 + Docling MVP：技術路徑與專案 MIT License 已完成，但人工 notice review 未完成，
+  仍不可標示 release-ready。
 - PaddleOCR optional extra：mocked coverage 完成；在 `python-bidi`、`crc32c` 與模型授權完成
   人工／法務複核前，不納入正式發布包。

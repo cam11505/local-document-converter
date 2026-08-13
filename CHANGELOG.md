@@ -10,6 +10,7 @@
 - Markdown、JSON、語意化 DOCX exporter。
 - 安全 CLI、設定優先序、檔案／頁數限制、atomic output 與穩定 exit codes。
 - Windows Python 3.12 SPDX 2.3 SBOM、release checklist 與 troubleshooting 文件。
+- MIT License、PEP 639 package metadata 與 Windows GitHub Actions release gates。
 
 ### Changed
 
@@ -24,5 +25,5 @@
 
 ## 版本建議
 
-- 完成人工授權複核與專案 LICENSE 決策後，建立 `0.1.0` MVP release。
+- 完成人工第三方／模型授權複核後，建立 `0.1.0` MVP release。
 - 在 blockers 關閉前維持 `Unreleased`，不建立正式 tag 或宣稱 production-ready。

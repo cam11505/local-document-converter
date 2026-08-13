@@ -822,7 +822,7 @@
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
+      "licenseDeclared": "MIT",
       "copyrightText": "NOASSERTION",
       "externalRefs": [
         {
@@ -830,8 +830,7 @@
           "referenceType": "purl",
           "referenceLocator": "pkg:pypi/local-document-converter@0.1.0"
         }
-      ],
-      "comment": "Package metadata did not declare an SPDX-normalised license."
+      ]
     },
     {
       "SPDXID": "SPDXRef-Package-lxml",

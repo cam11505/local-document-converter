@@ -744,7 +744,7 @@
       "downloadLocation": "file:///C:/Users/Ping/Documents/PDF%E6%96%87%E6%9B%B8%E8%BD%89%E6%8F%9B%E6%8C%87%E4%BB%A4%E7%B3%BB%E7%B5%B1/Local-Document-Converter-Starter",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
+      "licenseDeclared": "MIT",
       "copyrightText": "NOASSERTION",
       "externalRefs": [
         {
@@ -752,8 +752,7 @@
           "referenceType": "purl",
           "referenceLocator": "pkg:pypi/local-document-converter@0.1.0"
         }
-      ],
-      "comment": "Package metadata did not declare an SPDX-normalised license."
+      ]
     },
     {
       "SPDXID": "SPDXRef-Package-lxml",

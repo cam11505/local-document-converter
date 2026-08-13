@@ -16,8 +16,9 @@
 - 已產生 `sbom/windows-py312-dev-docling.spdx.json` 與
   `sbom/windows-py312-ocr.spdx.json`；詳細結論見 `docs/DEPENDENCY_AUDIT.md`。
 - 預設 Docling profile 未安裝 PyMuPDF、PaddleOCR 或 PaddlePaddle。
-- 專案目前沒有正式根目錄 `LICENSE`，在擁有者選定授權並同步 package metadata 前，
-  不可宣稱 release-ready。
+- 專案擁有者已於 2026-08-13 選定 MIT License；根目錄 `LICENSE` 與 PEP 639 package
+  metadata 已同步。此授權只涵蓋本專案程式碼，不改變第三方套件、原生函式庫、資料集
+  或模型權重的授權條款。
 
 > 這是工程盤點，不是法律意見。正式對外或閉源商用發布前，必須鎖定實際版本、產生完整 dependency tree/SBOM，並由法務或授權負責人複核。
 
